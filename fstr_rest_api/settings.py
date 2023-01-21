@@ -89,3 +89,5 @@ DATABASES = {
         'PORT': int(os.getenv('DB_PORT')),
     },
 }
+
+AUTH_USER_MODEL = "mpass.MPassUser"
