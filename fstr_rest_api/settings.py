@@ -15,6 +15,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'mpass',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +73,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 TIME_ZONE = str(os.getenv('TIME_ZONE'))
 
@@ -81,6 +86,6 @@ DATABASES = {
         'USER': str(os.getenv('DB_USER')),
         'PASSWORD': str(os.getenv('DB_PASS')),
         'HOST': str(os.getenv('DB_HOST')),
-        'PORT': str(os.getenv('DB_PORT')),
+        'PORT': int(os.getenv('DB_PORT')),
     },
 }
