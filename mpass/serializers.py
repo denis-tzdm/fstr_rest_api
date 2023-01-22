@@ -1,7 +1,10 @@
+import binascii
 from base64 import b64encode, b64decode
 
+from django.db.utils import OperationalError
 from rest_framework import serializers
 
+from .exceptions import EncodeDecodeException, DBConnectException
 from .models import Coords, MPassUser, AddedMPass, Image
 
 
@@ -52,10 +55,18 @@ class LevelSerializer(serializers.Serializer):
 class Base64BinaryField(serializers.Field):
 
     def to_representation(self, value):
-        return b64encode(value)
+        try:
+            return b64encode(value)
+        except binascii.Error as e:
+            detail = f'Image encode/decode error: {e.args[0]}'
+            raise EncodeDecodeException(detail)
 
     def to_internal_value(self, data):
-        return b64decode(data + '=' * (-len(data) % 4))
+        try:
+            return b64decode(data + '=' * (-len(data) % 4))
+        except binascii.Error as e:
+            detail = f'Image encode/decode error: {e.args[0]}'
+            raise EncodeDecodeException(detail)
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -99,16 +110,19 @@ class MPassSerializer(serializers.ModelSerializer):
         user = validated_data.pop('user')
         levels = validated_data.pop('get_levels')
         images = validated_data.pop('mpass_images')
-        user_instance = MPassUser.objects.filter(email=user['email']).first()
-        if not user_instance:
-            user_instance = MPassUser.objects.create(**user)
-        coords_instance, created = Coords.objects.get_or_create(**coords)
-        pass_instance = AddedMPass.objects.create(
-            user=user_instance,
-            coords=coords_instance,
-            **validated_data
-        )
-        pass_instance.set_levels(**levels)
-        for image in images:
-            Image.objects.create(mpass=pass_instance, **image)
-        return pass_instance
+        try:
+            user_instance = MPassUser.objects.filter(email=user['email']).first()
+            if not user_instance:
+                user_instance = MPassUser.objects.create(**user)
+            coords_instance, created = Coords.objects.get_or_create(**coords)
+            pass_instance = AddedMPass.objects.create(
+                user=user_instance,
+                coords=coords_instance,
+                **validated_data
+            )
+            pass_instance.set_levels(**levels)
+            for image in images:
+                Image.objects.create(mpass=pass_instance, **image)
+            return pass_instance
+        except OperationalError:
+            raise DBConnectException()
