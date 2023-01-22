@@ -1,3 +1,5 @@
+from base64 import b64encode, b64decode
+
 from rest_framework import serializers
 
 from .models import Coords, MPassUser, AddedMPass, Image
@@ -40,8 +42,24 @@ class LevelSerializer(serializers.Serializer):
     summer = serializers.CharField(allow_blank=True, max_length=2)
     autumn = serializers.CharField(allow_blank=True, max_length=2)
 
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+
+class Base64BinaryField(serializers.Field):
+
+    def to_representation(self, value):
+        return b64encode(value)
+
+    def to_internal_value(self, data):
+        return b64decode(data + '=' * (-len(data) % 4))
+
 
 class ImageSerializer(serializers.ModelSerializer):
+    data = Base64BinaryField()
 
     class Meta:
         model = Image
