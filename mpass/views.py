@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
 from .models import AddedMPass
@@ -21,6 +23,13 @@ class MPassViewset(viewsets.ModelViewSet):
         response.data = response_data
         response.content_type = 'application/json'
         return response
+
+    def retrieve(self, request, *args, **kwargs):
+        if not AddedMPass.objects.filter(id=kwargs['pk']).exists():
+            raise NotFound
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 def custom_exception_handler(exc, context):

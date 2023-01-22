@@ -100,9 +100,11 @@ class MPassSerializer(serializers.ModelSerializer):
             'user',
             'level',
             'images',
+            'status',
         ]
         read_only_fields = [
             'id',
+            'status',
         ]
 
     def create(self, validated_data):
