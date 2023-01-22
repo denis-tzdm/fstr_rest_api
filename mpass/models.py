@@ -13,12 +13,17 @@ class MPassUser(AbstractUser):
                              max_length=20,
                              null=True,
                              blank=True)
-    email = models.EmailField(verbose_name='e-mail', unique=True)
+    email = models.EmailField(verbose_name='e-mail', unique=True, max_length=255)
 
     class Meta:
         db_table = 'pereval_user'
         verbose_name = 'user'
         verbose_name_plural = 'users'
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.username = self.email
+        super(MPassUser, self).save(*args, **kwargs)
 
 
 class Coords(models.Model):
@@ -49,19 +54,19 @@ class AddedMPass(models.Model):
     other_titles = models.CharField(verbose_name='other titles', max_length=255)
     connects = models.CharField(verbose_name='pass connects', max_length=255)
     level_win = models.CharField(verbose_name='winter difficulty level',
-                                 max_length=22,
+                                 max_length=2,
                                  null=True,
                                  blank=True)
     level_spr = models.CharField(verbose_name='spring difficulty level',
-                                 max_length=22,
+                                 max_length=2,
                                  null=True,
                                  blank=True)
     level_sum = models.CharField(verbose_name='summer difficulty level',
-                                 max_length=22,
+                                 max_length=2,
                                  null=True,
                                  blank=True)
     level_aut = models.CharField(verbose_name='autumn difficulty level',
-                                 max_length=22,
+                                 max_length=2,
                                  null=True,
                                  blank=True)
     add_time = models.DateTimeField(verbose_name='added on')
@@ -76,9 +81,26 @@ class AddedMPass(models.Model):
         verbose_name = 'added mountain pass'
         verbose_name_plural = 'added mountain passes'
 
+    def get_levels(self):
+        return {
+            'winter': self.level_win,
+            'spring': self.level_spr,
+            'summer': self.level_sum,
+            'autumn': self.level_aut,
+        }
+
+    def set_levels(self, **kwargs):
+        self.level_win = kwargs.get('winter', '')
+        self.level_spr = kwargs.get('spring', '')
+        self.level_sum = kwargs.get('summer', '')
+        self.level_aut = kwargs.get('autumn', '')
+        self.save()
+
 
 class Image(models.Model):
-    mpass = models.ForeignKey(AddedMPass, on_delete=models.CASCADE)
+    mpass = models.ForeignKey(AddedMPass,
+                              related_name='mpass_images',
+                              on_delete=models.CASCADE)
     title = models.CharField(max_length=255, null=True, blank=True)
     data = models.BinaryField(null=True)
 
