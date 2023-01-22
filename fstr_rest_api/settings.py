@@ -91,3 +91,7 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = "mpass.MPassUser"
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'mpass.views.custom_exception_handler'
+}

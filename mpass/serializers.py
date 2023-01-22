@@ -79,6 +79,7 @@ class MPassSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddedMPass
         fields = [
+            'id',
             'beauty_title',
             'title',
             'other_titles',
@@ -88,6 +89,9 @@ class MPassSerializer(serializers.ModelSerializer):
             'user',
             'level',
             'images',
+        ]
+        read_only_fields = [
+            'id',
         ]
 
     def create(self, validated_data):
