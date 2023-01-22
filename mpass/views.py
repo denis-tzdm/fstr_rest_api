@@ -8,7 +8,6 @@ from .serializers import MPassSerializer
 class MPassViewset(viewsets.ModelViewSet):
     queryset = AddedMPass.objects.all()
     serializer_class = MPassSerializer
-    http_method_names = ['post', ]
 
     def create(self, request, *args, **kwargs):
         response = super(MPassViewset, self).create(request, *args, **kwargs)
@@ -26,14 +25,11 @@ class MPassViewset(viewsets.ModelViewSet):
 
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
-
     if response is not None:
-        rd = response.data
         response.data = {
             'status': response.status_code,
-            'message': rd,
+            'message': exc.detail,
             'id': None,
         }
-        response.content_type = 'application/json'
 
     return response
