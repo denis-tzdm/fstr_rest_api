@@ -1,12 +1,9 @@
 import os
+
+import environ
 from pathlib import Path
 
-from dotenv import load_dotenv
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-DEBUG = True
-ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -73,20 +70,24 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+env = environ.Env()
+env_dir = os.path.join(BASE_DIR, 'env')
+environ.Env.read_env(os.path.join(env_dir, '.env'))
 
-SECRET_KEY = str(os.getenv('SECRET_KEY'))
-TIME_ZONE = str(os.getenv('TIME_ZONE'))
+SECRET_KEY = env('SECRET_KEY')
+TIME_ZONE = env('TIME_ZONE')
+
+DEBUG = env('DEBUG')
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': str(os.getenv('DB_NAME')),
-        'USER': str(os.getenv('DB_USER')),
-        'PASSWORD': str(os.getenv('DB_PASS')),
-        'HOST': str(os.getenv('DB_HOST')),
-        'PORT': int(os.getenv('DB_PORT')),
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASS'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     },
 }
 
