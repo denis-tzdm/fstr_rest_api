@@ -1,5 +1,7 @@
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path
+from django.views.generic import TemplateView
+from rest_framework.schemas import get_schema_view
 
 from mpass.views import MPassViewset
 
@@ -19,4 +21,9 @@ urlpatterns = [
     path('submitData', mpass_list, name='mpass-list'),
     path('submitData/<int:pk>', mpass_detail, name='mpass-detail'),
     path('submitData/', mpass_list_filtered, name='mpass-list-filtered'),
+    path('swagger-ui/', TemplateView.as_view(template_name="swagger-ui.html")),
+    path('redoc/', TemplateView.as_view(
+        template_name='redoc.html',
+        extra_context={'schema_url': 'openapi-schema'}
+    ), name='redoc'),
 ]
