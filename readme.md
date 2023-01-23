@@ -2,3 +2,4 @@ Rest API для сайта Федерации спортивного туриз�
 
 ***
 
+Документация (Swagger-UI) на [Github Pages](https://denis-tzdm.github.io/fstr_rest_api/).
