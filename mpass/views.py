@@ -16,7 +16,11 @@ class MPassViewset(viewsets.ModelViewSet):
         if user_email:
             queryset = AddedMPass.objects.filter(user__email=user_email)
         else:
-            queryset = AddedMPass.objects.none()
+            path = self.request.get_full_path()
+            if path == '/submitData/':
+                queryset = AddedMPass.objects.none()
+            else:
+                queryset = AddedMPass.objects.all()
         return queryset
 
     def create(self, request, *args, **kwargs):
