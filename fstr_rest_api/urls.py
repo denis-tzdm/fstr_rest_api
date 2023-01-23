@@ -7,7 +7,8 @@ mpass_list = MPassViewset.as_view({
     'post': 'create',
 })
 mpass_detail = MPassViewset.as_view({
-    'get': 'retrieve'
+    'get': 'retrieve',
+    'patch': 'partial_update',
 })
 
 urlpatterns = [

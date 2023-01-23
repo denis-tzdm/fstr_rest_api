@@ -2,6 +2,7 @@ import binascii
 from base64 import b64encode, b64decode
 
 from django.db.utils import OperationalError
+from django.forms import model_to_dict
 from rest_framework import serializers
 
 from .exceptions import EncodeDecodeException, DBConnectException
@@ -126,5 +127,37 @@ class MPassSerializer(serializers.ModelSerializer):
             for image in images:
                 Image.objects.create(mpass=pass_instance, **image)
             return pass_instance
+        except OperationalError:
+            raise DBConnectException()
+
+    def update(self, instance, validated_data):
+        coords = validated_data.pop('coords', None)
+        user = validated_data.pop('user', None)
+        levels = validated_data.pop('get_levels', None)
+        images = validated_data.pop('mpass_images', None)
+        try:
+            # in case when user should be modifiable or replaceable
+            # if user:
+            #     email = user.get('email')
+            #     if email:
+            #         instance.user, created = MPassUser.objects.get_or_create(email=email)
+            #     else:
+            #         email = instance.user.email
+            #     MPassUser.objects.filter(email=email).update(**user)
+            if coords:
+                coords_fields = model_to_dict(instance.coords)
+                coords_fields = coords_fields | coords
+                coords_fields.pop('id', None)
+                coords_instance, created = Coords.objects.get_or_create(**coords_fields)
+                instance.coords = coords_instance
+            if levels:
+                levels_fields = instance.get_levels()
+                levels_fields = levels_fields | levels
+                instance.set_levels(**levels_fields)
+            if images:
+                Image.objects.filter(mpass=instance).delete()
+                for image in images:
+                    Image.objects.create(mpass=instance, **image)
+            return super().update(instance, validated_data)
         except OperationalError:
             raise DBConnectException()
