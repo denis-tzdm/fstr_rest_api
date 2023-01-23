@@ -3,14 +3,9 @@ info:
   title: Rest API для сайта ФСТР pereval.online
   version: '1.0'
   description: Реализованы методы для добавления, просмотра и изменения отчётов о пересечении горных объектов.
-servers:
-  - url: https://fstr.trozo.tk
 tags:
   - name: Отчеты
     description: Операции с отчетами
-    externalDocs:
-      description: Сайт
-      url: https://pereval.online
 paths:
   /submitData:
     post:
