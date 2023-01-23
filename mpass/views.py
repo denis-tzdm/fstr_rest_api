@@ -9,8 +9,15 @@ from .serializers import MPassSerializer
 
 
 class MPassViewset(viewsets.ModelViewSet):
-    queryset = AddedMPass.objects.all()
     serializer_class = MPassSerializer
+
+    def get_queryset(self):
+        user_email = self.request.query_params.get('user_email')
+        if user_email:
+            queryset = AddedMPass.objects.filter(user__email=user_email)
+        else:
+            queryset = AddedMPass.objects.none()
+        return queryset
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
