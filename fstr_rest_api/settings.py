@@ -79,6 +79,7 @@ TIME_ZONE = env('TIME_ZONE')
 
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
 
 DATABASES = {
     'default': {
