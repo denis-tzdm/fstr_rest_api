@@ -11,7 +11,6 @@ from .models import Image, AddedMPass
 
 
 class BaseTestCase(APITestCase):
-
     report = None
     coords = None
     user = None

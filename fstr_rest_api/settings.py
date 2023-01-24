@@ -69,7 +69,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = '.'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / 'static',
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -96,7 +96,7 @@ DATABASES = {
     },
 }
 
-AUTH_USER_MODEL = "mpass.MPassUser"
+AUTH_USER_MODEL = 'mpass.MPassUser'
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'mpass.views.custom_exception_handler'
