@@ -3,3 +3,4 @@ django-rest-framework
 psycopg2
 factory-boy
 Pillow
+django-environ
